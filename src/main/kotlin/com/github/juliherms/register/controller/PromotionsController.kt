@@ -15,11 +15,6 @@ class PromotionsController {
     @Autowired
     lateinit var promotions: ConcurrentHashMap<Long,Promotion>
 
-    @RequestMapping(value = ["/sayHello"], method = arrayOf(RequestMethod.GET))
-    fun sayHello(): String {
-        return "Hello World";
-    }
-
     @RequestMapping(value = ["/promotions/{id}"], method = arrayOf(RequestMethod.GET))
     fun getById(@PathVariable id: Long): Promotion? {
         return promotions[id]
@@ -34,4 +29,18 @@ class PromotionsController {
     fun delete (@PathVariable id: Long) {
         promotions.remove(id);
     }
+
+    @RequestMapping(value = ["/promotions/{id}"], method = arrayOf(RequestMethod.PUT))
+    fun update (@PathVariable id:Long, @RequestBody promotion:Promotion) {
+        promotions.remove(id)
+        promotions[id] = promotion
+    }
+
+    @RequestMapping(value = ["/promotions"], method = arrayOf(RequestMethod.GET))
+    fun listAll(@RequestParam(required = false, defaultValue = "") description: String) =
+
+        promotions.filter {
+            it.value.description.contains(description,true)
+        }.map (Map.Entry<Long,Promotion>::value).toList()
+
 }
