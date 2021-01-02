@@ -10,37 +10,37 @@ import java.util.concurrent.ConcurrentHashMap
  * This class responsible to provide promotions endpoint
  */
 @RestController
+@RequestMapping(value = ["/promotions"])
 class PromotionsController {
 
     @Autowired
     lateinit var promotions: ConcurrentHashMap<Long,Promotion>
 
-    @RequestMapping(value = ["/promotions/{id}"], method = arrayOf(RequestMethod.GET))
+    @GetMapping("/{id}")
     fun getById(@PathVariable id: Long): Promotion? {
         return promotions[id]
      }
 
-    @RequestMapping(value = ["/promotions"], method = arrayOf(RequestMethod.POST))
+    @PostMapping()
     fun create(@RequestBody promotion: Promotion) {
         promotions[promotion.id] = promotion
     }
 
-    @RequestMapping(value = ["/promotions/{id}"], method = arrayOf(RequestMethod.DELETE))
+    @DeleteMapping("/{id}")
     fun delete (@PathVariable id: Long) {
         promotions.remove(id);
     }
 
-    @RequestMapping(value = ["/promotions/{id}"], method = arrayOf(RequestMethod.PUT))
+    @PutMapping("/{id}")
     fun update (@PathVariable id:Long, @RequestBody promotion:Promotion) {
         promotions.remove(id)
         promotions[id] = promotion
     }
 
-    @RequestMapping(value = ["/promotions"], method = arrayOf(RequestMethod.GET))
+    @GetMapping("")
     fun listAll(@RequestParam(required = false, defaultValue = "") description: String) =
 
         promotions.filter {
             it.value.description.contains(description,true)
         }.map (Map.Entry<Long,Promotion>::value).toList()
-
 }
