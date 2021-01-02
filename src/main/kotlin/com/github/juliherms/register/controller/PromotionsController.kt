@@ -1,9 +1,9 @@
 package com.github.juliherms.register.controller
 
 import com.github.juliherms.register.model.Promotion
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.bind.annotation.*
+import java.util.concurrent.ConcurrentHashMap
 
 
 /**
@@ -12,17 +12,26 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class PromotionsController {
 
+    @Autowired
+    lateinit var promotions: ConcurrentHashMap<Long,Promotion>
+
     @RequestMapping(value = ["/sayHello"], method = arrayOf(RequestMethod.GET))
     fun sayHello(): String {
         return "Hello World";
     }
 
-    @RequestMapping(value = ["/promotions"], method = arrayOf(RequestMethod.GET))
-    fun getPromotion(): Promotion{
+    @RequestMapping(value = ["/promotions/{id}"], method = arrayOf(RequestMethod.GET))
+    fun getById(@PathVariable id: Long): Promotion? {
+        return promotions[id]
+     }
 
-        var promotion = Promotion(id = 1L, description = "teste", quantityDays = 7, 10.00, percentualDiscount = 10.00 )
-        return promotion
+    @RequestMapping(value = ["/promotions"], method = arrayOf(RequestMethod.POST))
+    fun create(@RequestBody promotion: Promotion) {
+        promotions[promotion.id] = promotion
     }
 
-
+    @RequestMapping(value = ["/promotions/{id}"], method = arrayOf(RequestMethod.DELETE))
+    fun delete (@PathVariable id: Long) {
+        promotions.remove(id);
+    }
 }
